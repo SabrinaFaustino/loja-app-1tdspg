@@ -5,7 +5,7 @@ export async function GET(request,{params}) {
 
   const file = await fs.readFile(process.cwd() + "/src/app/api/base/db.json", 'utf8');
 
-  //Extraindo a lista de usuários do arquivo JSON:
+  // Extraindo a lista de usuários do arquivo JSON:
   const lista = await JSON.parse(file);
 
   const id = params.id;
@@ -18,10 +18,30 @@ export async function GET(request,{params}) {
 }
 
 export async function POST(request, response){
+  
   const file = await fs.readFile(process.cwd() + "/src/app/api/base/db.json", 'utf8');
 
   //Extraindo a lista de usuários do arquivo JSON:
   const lista = await JSON.parse(file);
 
-  const id = params.id;
+  //Recebendo dados assincronos com await;
+  const userRequest = await request.json();
+
+  try {
+    for (let x = 0; x < lista.usuarios.length; x++) {
+      const userLista = lista.usuarios[x];
+
+      //Validando o usúario de fato:
+      if(userLista.email == userRequest.email && userLista.senha == userRequest.senha){
+        return NextResponse.json({"status":true});      
+      }
+    }
+  } catch (error) {
+    console.log(error);
+  }
+
+  return NextResponse.json({"status":false});
+  // console.log("MENSAGEM : ");
+  // console.log(msg);
+
 }
